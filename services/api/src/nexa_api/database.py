@@ -8,20 +8,24 @@ from nexa_api.config import get_settings
 
 settings = get_settings()
 
+database_url = settings.sqlalchemy_database_url
+
 connect_args = (
     {"check_same_thread": False}
-    if settings.database_url.startswith("sqlite")
+    if settings.is_sqlite
     else {}
 )
 
+
 engine = create_engine(
-    settings.database_url,
+    database_url,
     connect_args=connect_args,
     echo=False,
+    pool_pre_ping=True,
 )
 
 
-if settings.database_url.startswith("sqlite"):
+if settings.is_sqlite:
 
     @event.listens_for(engine, "connect")
     def enable_sqlite_foreign_keys(
@@ -60,6 +64,8 @@ def check_database_connection() -> bool:
     """Return True when Nexa can communicate with its database."""
 
     with engine.connect() as connection:
-        result = connection.execute(text("SELECT 1")).scalar_one()
+        result = connection.execute(
+            text("SELECT 1")
+        ).scalar_one()
 
     return result == 1

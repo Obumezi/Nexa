@@ -21,10 +21,48 @@ class Settings(BaseSettings):
     api_port: int = 8000
     web_origin: str = "http://localhost:5173"
 
+    # Local development defaults to SQLite.
+    #
+    # Production can override this with:
+    # NEXA_DATABASE_URL=postgresql+psycopg://...
     database_url: str = "sqlite:///./nexa.db"
 
     openai_api_key: str | None = None
     openai_model: str = "gpt-6-astra"
+
+    @property
+    def is_production(self) -> bool:
+        """Return whether Nexa is running in production."""
+
+        return self.environment.casefold() == "production"
+
+    @property
+    def is_sqlite(self) -> bool:
+        """Return whether Nexa is using SQLite."""
+
+        return self.database_url.startswith("sqlite")
+
+    @property
+    def sqlalchemy_database_url(self) -> str:
+        """Return a SQLAlchemy-compatible database URL."""
+
+        url = self.database_url.strip()
+
+        if url.startswith("postgres://"):
+            return url.replace(
+                "postgres://",
+                "postgresql+psycopg://",
+                1,
+            )
+
+        if url.startswith("postgresql://"):
+            return url.replace(
+                "postgresql://",
+                "postgresql+psycopg://",
+                1,
+            )
+
+        return url
 
 
 @lru_cache
