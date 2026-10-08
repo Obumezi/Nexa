@@ -15,6 +15,7 @@ from nexa_api.presence_service import list_presence
 from nexa_api.schemas import AgentResponse
 from nexa_api.task_service import list_tasks
 from nexa_api.visitor_service import list_visitors
+from mcp.server.transport_security import TransportSecuritySettings
 
 mcp = MCPServer("Nexa")
 
@@ -519,10 +520,25 @@ def main() -> None:
 def build_mcp_app():
     """Return Nexa's MCP Streamable HTTP ASGI application."""
 
+    security = TransportSecuritySettings(
+        allowed_hosts=[
+            "localhost",
+            "localhost:*",
+            "127.0.0.1",
+            "127.0.0.1:*",
+            "ne-04cc8c14d3034648807786de0fec834e.ecs.us-east-1.on.aws",
+            "ne-04cc8c14d3034648807786de0fec834e.ecs.us-east-1.on.aws:*",
+        ],
+        allowed_origins=[
+            "https://ne-04cc8c14d3034648807786de0fec834e.ecs.us-east-1.on.aws",
+        ],
+    )
+
     return mcp.streamable_http_app(
         streamable_http_path="/",
         stateless_http=True,
         json_response=True,
+        transport_security=security,
     )
 
 
