@@ -521,17 +521,7 @@ def build_mcp_app():
     """Return Nexa's MCP Streamable HTTP ASGI application."""
 
     security = TransportSecuritySettings(
-        allowed_hosts=[
-            "localhost",
-            "localhost:*",
-            "127.0.0.1",
-            "127.0.0.1:*",
-            "ne-04cc8c14d3034648807786de0fec834e.ecs.us-east-1.on.aws",
-            "ne-04cc8c14d3034648807786de0fec834e.ecs.us-east-1.on.aws:*",
-        ],
-        allowed_origins=[
-            "https://ne-04cc8c14d3034648807786de0fec834e.ecs.us-east-1.on.aws",
-        ],
+        enable_dns_rebinding_protection=False,
     )
 
     return mcp.streamable_http_app(
