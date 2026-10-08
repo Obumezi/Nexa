@@ -1,0 +1,53 @@
+# Environment / secrets
+.env
+.env.*
+**/.env
+**/.env.*
+!.env.example
+!**/.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+**/.venv/
+**/venv/
+
+# Testing / linting
+.pytest_cache/
+.ruff_cache/
+.pytest_tmp/
+**/.pytest_cache/
+**/.ruff_cache/
+**/.pytest_tmp/
+
+# Databases
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+**/*.db
+**/*.db-journal
+**/*.db-shm
+**/*.db-wal
+
+# Nexa database backups
+nexa.before_demo_cleanup_*.db
+**/nexa.before_demo_cleanup_*.db
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Build output
+build/
+dist/
+*.egg-info/

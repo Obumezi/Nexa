@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+    <title>Nexa — Alexa+ Experience</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family:
+                Inter,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+            background:
+                radial-gradient(
+                    circle at top,
+                    #172554 0%,
+                    #080d1c 42%,
+                    #030712 100%
+                );
+            color: #f8fafc;
+        }
+
+        .page {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 32px 0 48px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-mark {
+            width: 44px;
+            height: 44px;
+            border-radius: 15px;
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            font-size: 20px;
+            background:
+                linear-gradient(
+                    135deg,
+                    #38bdf8,
+                    #6366f1,
+                    #a855f7
+                );
+            box-shadow:
+                0 0 32px rgba(99, 102, 241, 0.45);
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 20px;
+            letter-spacing: -0.02em;
+        }
+
+        .brand p {
+            margin: 3px 0 0;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 13px;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            background: rgba(15, 23, 42, 0.72);
+            border-radius: 999px;
+            color: #cbd5e1;
+            font-size: 13px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 14px #22c55e;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 22px;
+        }
+
+        .panel {
+            border: 1px solid rgba(148, 163, 184, 0.14);
+            background: rgba(8, 15, 32, 0.78);
+            backdrop-filter: blur(24px);
+            border-radius: 28px;
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, 0.32);
+        }
+
+        .assistant-panel {
+            min-height: 720px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 38px 24px 28px;
+        }
+
+        .orb-wrap {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            display: grid;
+            place-items: center;
+        }
+
+        .orb-glow {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(56, 189, 248, 0.45),
+                    rgba(99, 102, 241, 0.18) 55%,
+                    transparent 72%
+                );
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        .orb {
+            position: relative;
+            width: 94px;
+            height: 94px;
+            border-radius: 50%;
+            background:
+                radial-gradient(
+                    circle at 30% 25%,
+                    #e0f2fe,
+                    #38bdf8 24%,
+                    #6366f1 58%,
+                    #581c87 100%
+                );
+            box-shadow:
+                inset -10px -14px 28px rgba(0, 0, 0, 0.25),
+                0 0 35px rgba(56, 189, 248, 0.48),
+                0 0 72px rgba(99, 102, 241, 0.35);
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .orb.thinking {
+            animation:
+                float 4s ease-in-out infinite,
+                thinking 1s linear infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(0.92);
+                opacity: 0.65;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        @keyframes thinking {
+            0% {
+                filter: hue-rotate(0deg);
+            }
+
+            100% {
+                filter: hue-rotate(360deg);
+            }
+        }
+
+        .hero h2 {
+            margin: 14px 0 6px;
+            font-size: 28px;
+            letter-spacing: -0.04em;
+        }
+
+        .hero p {
+            margin: 0;
+            color: #94a3b8;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .chat {
+            flex: 1;
+            padding: 8px 24px 20px;
+            overflow-y: auto;
+            max-height: 380px;
+        }
+
+        .message {
+            display: flex;
+            margin: 14px 0;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .bubble {
+            max-width: 78%;
+            padding: 13px 16px;
+            border-radius: 18px;
+            line-height: 1.45;
+            font-size: 14px;
+        }
+
+        .message.assistant .bubble {
+            background: rgba(30, 41, 59, 0.85);
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            border-bottom-left-radius: 6px;
+        }
+
+        .message.user .bubble {
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #6366f1
+                );
+            border-bottom-right-radius: 6px;
+        }
+
+        .composer {
+            padding: 18px 20px 20px;
+            border-top: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        input,
+        button {
+            font: inherit;
+        }
+
+        #messageInput {
+            flex: 1;
+            min-width: 0;
+            padding: 14px 16px;
+            color: #f8fafc;
+            background: rgba(15, 23, 42, 0.9);
+            border:
+                1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 15px;
+            outline: none;
+        }
+
+        #messageInput:focus {
+            border-color: rgba(96, 165, 250, 0.7);
+            box-shadow:
+                0 0 0 3px rgba(59, 130, 246, 0.12);
+        }
+
+        .icon-button,
+        .send-button {
+            border: 0;
+            cursor: pointer;
+            border-radius: 15px;
+        }
+
+        .icon-button {
+            width: 48px;
+            background: rgba(30, 41, 59, 0.9);
+            color: #f8fafc;
+        }
+
+        .send-button {
+            padding: 0 20px;
+            background:
+                linear-gradient(
+                    135deg,
+                    #38bdf8,
+                    #6366f1
+                );
+            color: white;
+            font-weight: 700;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .confirmation {
+            display: none;
+            margin-top: 12px;
+            gap: 10px;
+        }
+
+        .confirmation.visible {
+            display: flex;
+        }
+
+        .confirm-button,
+        .cancel-button {
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            padding: 10px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        .confirm-button {
+            background: #22c55e;
+            color: #052e16;
+            font-weight: 700;
+        }
+
+        .cancel-button {
+            background: rgba(30, 41, 59, 0.9);
+            color: #cbd5e1;
+        }
+
+        .sidebar {
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .sidebar h3 {
+            margin: 0 0 12px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #64748b;
+        }
+
+        .speaker-input {
+            width: 100%;
+            padding: 12px 13px;
+            border-radius: 12px;
+            border:
+                1px solid rgba(148, 163, 184, 0.16);
+            background: rgba(15, 23, 42, 0.8);
+            color: white;
+            outline: none;
+        }
+
+        .skill-card {
+            padding: 15px;
+            border-radius: 16px;
+            background: rgba(30, 41, 59, 0.55);
+            border:
+                1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .skill-name {
+            color: #7dd3fc;
+            font-weight: 700;
+            word-break: break-word;
+        }
+
+        .meta {
+            margin-top: 7px;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .examples {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .example-button {
+            width: 100%;
+            text-align: left;
+            padding: 11px 12px;
+            border-radius: 12px;
+            border:
+                1px solid rgba(148, 163, 184, 0.12);
+            color: #cbd5e1;
+            background: rgba(15, 23, 42, 0.55);
+            cursor: pointer;
+        }
+
+        .example-button:hover {
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .result-box {
+            max-height: 180px;
+            overflow: auto;
+            padding: 12px;
+            border-radius: 12px;
+            background: #020617;
+            color: #94a3b8;
+            font-family:
+                "Cascadia Code",
+                Consolas,
+                monospace;
+            font-size: 11px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        @media (max-width: 860px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .assistant-panel {
+                min-height: 650px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="page">
+    <header class="topbar">
+        <div class="brand">
+            <div class="brand-mark">N</div>
+
+            <div>
+                <h1>Nexa</h1>
+                <p>Alexa+ Experience Simulator</p>
+            </div>
+        </div>
+
+        <div class="status-pill">
+            <span class="status-dot"></span>
+            MCP Connected
+        </div>
+    </header>
+
+    <main class="layout">
+        <section class="panel assistant-panel">
+            <div class="hero">
+                <div class="orb-wrap">
+                    <div class="orb-glow"></div>
+                    <div
+                        class="orb"
+                        id="assistantOrb"
+                    ></div>
+                </div>
+
+                <h2>Talk to Nexa</h2>
+
+                <p>
+                    Agent Skills + MCP over Streamable HTTP
+                </p>
+            </div>
+
+            <div
+                class="chat"
+                id="chat"
+            >
+                <div class="message assistant">
+                    <div class="bubble">
+                        Hi, I'm Nexa. Ask me what's happening
+                        around the house.
+                    </div>
+                </div>
+            </div>
+
+            <div class="composer">
+                <div class="input-row">
+                    <input
+                        id="messageInput"
+                        type="text"
+                        autocomplete="off"
+                        placeholder="Ask Nexa something..."
+                    >
+
+                    <button
+                        class="icon-button"
+                        id="microphoneButton"
+                        type="button"
+                        aria-label="Use microphone"
+                    >
+                        🎙
+                    </button>
+
+                    <button
+                        class="send-button"
+                        id="sendButton"
+                        type="button"
+                    >
+                        Send
+                    </button>
+                </div>
+
+                <div
+                    class="confirmation"
+                    id="confirmationControls"
+                >
+                    <button
+                        class="confirm-button"
+                        id="confirmButton"
+                        type="button"
+                    >
+                        Confirm
+                    </button>
+
+                    <button
+                        class="cancel-button"
+                        id="cancelButton"
+                        type="button"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <aside class="panel sidebar">
+            <section>
+                <h3>Speaker</h3>
+
+                <input
+                    class="speaker-input"
+                    id="speakerName"
+                    value="Obumneme"
+                    placeholder="Household member"
+                >
+
+                <div class="meta">
+                    Used for first-person requests such as
+                    “I'm home.”
+                </div>
+            </section>
+
+            <section>
+                <h3>Active Agent Skill</h3>
+
+                <div class="skill-card">
+                    <div
+                        class="skill-name"
+                        id="skillName"
+                    >
+                        Waiting for request
+                    </div>
+
+                    <div
+                        class="meta"
+                        id="actionStatus"
+                    >
+                        No action executed
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h3>Try asking</h3>
+
+                <div class="examples">
+                    <button
+                        class="example-button"
+                        data-message="Who is home?"
+                    >
+                        Who is home?
+                    </button>
+
+                    <button
+                        class="example-button"
+                        data-message="What tasks are open?"
+                    >
+                        What tasks are open?
+                    </button>
+
+                    <button
+                        class="example-button"
+                        data-message="What deliveries are pending?"
+                    >
+                        What deliveries are pending?
+                    </button>
+
+                    <button
+                        class="example-button"
+                        data-message="I'm leaving."
+                    >
+                        I'm leaving.
+                    </button>
+                </div>
+            </section>
+
+            <section>
+                <h3>Last MCP Result</h3>
+
+                <pre
+                    class="result-box"
+                    id="resultBox"
+                >No MCP call yet.</pre>
+            </section>
+        </aside>
+    </main>
+</div>
+
+<script>
+    const chat = document.getElementById("chat");
+    const messageInput = document.getElementById("messageInput");
+    const speakerName = document.getElementById("speakerName");
+    const sendButton = document.getElementById("sendButton");
+    const microphoneButton =
+        document.getElementById("microphoneButton");
+    const confirmationControls =
+        document.getElementById("confirmationControls");
+    const confirmButton =
+        document.getElementById("confirmButton");
+    const cancelButton =
+        document.getElementById("cancelButton");
+    const skillName = document.getElementById("skillName");
+    const actionStatus =
+        document.getElementById("actionStatus");
+    const resultBox = document.getElementById("resultBox");
+    const assistantOrb =
+        document.getElementById("assistantOrb");
+
+    let pendingMessage = null;
+
+    function addMessage(role, text) {
+        const wrapper = document.createElement("div");
+        wrapper.className = `message ${role}`;
+
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.textContent = text;
+
+        wrapper.appendChild(bubble);
+        chat.appendChild(wrapper);
+
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    function setThinking(thinking) {
+        assistantOrb.classList.toggle(
+            "thinking",
+            thinking,
+        );
+
+        sendButton.disabled = thinking;
+        microphoneButton.disabled = thinking;
+    }
+
+    async function sendMessage(
+        message,
+        confirm = false,
+        displayUserMessage = true,
+    ) {
+        const cleanMessage = message.trim();
+
+        if (!cleanMessage) {
+            return;
+        }
+
+        if (displayUserMessage) {
+            addMessage("user", cleanMessage);
+        }
+
+        setThinking(true);
+
+        confirmationControls.classList.remove(
+            "visible",
+        );
+
+        try {
+            const response = await fetch(
+                "/api/v1/simulator",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        message: cleanMessage,
+                        speaker_name:
+                            speakerName.value.trim() || null,
+                        confirm,
+                    }),
+                },
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    `HTTP ${response.status}`,
+                );
+            }
+
+            const data = await response.json();
+
+            addMessage(
+                "assistant",
+                data.message,
+            );
+
+            skillName.textContent =
+                data.skill || "No Agent Skill selected";
+
+            resultBox.textContent =
+                JSON.stringify(
+                    data.result,
+                    null,
+                    2,
+                );
+
+            if (data.action_executed) {
+                actionStatus.textContent =
+                    "Action executed";
+            } else if (data.requires_confirmation) {
+                actionStatus.textContent =
+                    "Waiting for confirmation";
+            } else {
+                actionStatus.textContent =
+                    "Read-only / no action";
+            }
+
+            if (data.requires_confirmation) {
+                pendingMessage = cleanMessage;
+
+                confirmationControls.classList.add(
+                    "visible",
+                );
+            } else {
+                pendingMessage = null;
+            }
+        } catch (error) {
+            console.error(error);
+
+            addMessage(
+                "assistant",
+                "I couldn't reach the Nexa MCP service.",
+            );
+
+            actionStatus.textContent =
+                "Connection error";
+        } finally {
+            setThinking(false);
+        }
+    }
+
+    sendButton.addEventListener(
+        "click",
+        () => {
+            const message = messageInput.value;
+
+            messageInput.value = "";
+
+            sendMessage(message);
+        },
+    );
+
+    messageInput.addEventListener(
+        "keydown",
+        (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                sendButton.click();
+            }
+        },
+    );
+
+    confirmButton.addEventListener(
+        "click",
+        () => {
+            if (!pendingMessage) {
+                return;
+            }
+
+            const message = pendingMessage;
+
+            confirmationControls.classList.remove(
+                "visible",
+            );
+
+            addMessage("user", "Yes, confirm.");
+
+            sendMessage(
+                message,
+                true,
+                false,
+            );
+        },
+    );
+
+    cancelButton.addEventListener(
+        "click",
+        () => {
+            pendingMessage = null;
+
+            confirmationControls.classList.remove(
+                "visible",
+            );
+
+            addMessage(
+                "assistant",
+                "Okay, I won't make that change.",
+            );
+
+            actionStatus.textContent =
+                "Action cancelled";
+        },
+    );
+
+    document
+        .querySelectorAll(".example-button")
+        .forEach((button) => {
+            button.addEventListener(
+                "click",
+                () => {
+                    const message =
+                        button.dataset.message;
+
+                    messageInput.value = message;
+                    sendButton.click();
+                },
+            );
+        });
+
+    const SpeechRecognition =
+        window.SpeechRecognition
+        || window.webkitSpeechRecognition;
+
+    if (SpeechRecognition) {
+        const recognition =
+            new SpeechRecognition();
+
+        recognition.lang = "en-US";
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        microphoneButton.addEventListener(
+            "click",
+            () => {
+                recognition.start();
+            },
+        );
+
+        recognition.onresult = (event) => {
+            const transcript =
+                event.results[0][0].transcript;
+
+            messageInput.value = transcript;
+
+            sendButton.click();
+        };
+    } else {
+        microphoneButton.addEventListener(
+            "click",
+            () => {
+                addMessage(
+                    "assistant",
+                    "Voice input isn't supported in this browser. You can still type your request.",
+                );
+            },
+        );
+    }
+</script>
+</body>
+</html>
