@@ -1,0 +1,77 @@
+{
+    "family":  "default-nexa-api-3f6e",
+    "networkMode":  "awsvpc",
+    "containerDefinitions":  [
+                                 {
+                                     "name":  "Main",
+                                     "image":  "140575895576.dkr.ecr.us-east-1.amazonaws.com/nexa-api:refresh-v1",
+                                     "cpu":  1024,
+                                     "memory":  2048,
+                                     "memoryReservation":  2048,
+                                     "portMappings":  [
+                                                          {
+                                                              "containerPort":  8000,
+                                                              "hostPort":  8000,
+                                                              "protocol":  "tcp",
+                                                              "name":  "main-8000-tcp"
+                                                          }
+                                                      ],
+                                     "essential":  true,
+                                     "command":  [
+
+                                                 ],
+                                     "environment":  [
+                                                         {
+                                                             "name":  "NEXA_API_PORT",
+                                                             "value":  "8000"
+                                                         },
+                                                         {
+                                                             "name":  "NEXA_ENVIRONMENT",
+                                                             "value":  "production"
+                                                         },
+                                                         {
+                                                             "name":  "NEXA_OPENAI_MODEL",
+                                                             "value":  "gpt-6-astra"
+                                                         },
+                                                         {
+                                                             "name":  "NEXA_WEB_ORIGIN",
+                                                             "value":  "*"
+                                                         },
+                                                         {
+                                                             "name":  "NEXA_API_HOST",
+                                                             "value":  "0.0.0.0"
+                                                         }
+                                                     ],
+                                     "mountPoints":  [
+
+                                                     ],
+                                     "volumesFrom":  [
+
+                                                     ],
+                                     "secrets":  [
+                                                     {
+                                                         "name":  "NEXA_OPENAI_API_KEY",
+                                                         "valueFrom":  "arn:aws:secretsmanager:us-east-1:140575895576:secret:nexa/production/openai-api-key-HogGtF:nexa/production/openai-api-key::"
+                                                     }
+                                                 ],
+                                     "logConfiguration":  {
+                                                              "logDriver":  "awslogs",
+                                                              "options":  {
+                                                                              "awslogs-group":  "/aws/ecs/default/nexa-api-3f6e-a279",
+                                                                              "awslogs-region":  "us-east-1",
+                                                                              "awslogs-stream-prefix":  "ecs"
+                                                                          }
+                                                          }
+                                 }
+                             ],
+    "executionRoleArn":  "arn:aws:iam::140575895576:role/service-role/ecsTaskExecutionRole",
+    "requiresCompatibilities":  [
+                                    "FARGATE"
+                                ],
+    "cpu":  "1024",
+    "memory":  "2048",
+    "runtimePlatform":  {
+                            "cpuArchitecture":  "X86_64",
+                            "operatingSystemFamily":  "LINUX"
+                        }
+}
