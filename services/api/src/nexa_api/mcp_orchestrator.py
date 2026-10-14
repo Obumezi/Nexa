@@ -5,9 +5,6 @@ from dataclasses import dataclass
 from nexa_api.agent_service import resolve_agent_intent
 from nexa_api.schemas import AgentDecision, AgentIntent
 
-"""  """
-
-
 
 @dataclass(frozen=True)
 class MCPToolCall:
@@ -24,6 +21,12 @@ def plan_mcp_tool_call(
     speaker_name: str | None = None,
 ) -> MCPToolCall | None:
     """Translate an AgentDecision into a Nexa MCP tool call."""
+
+    if decision.intent == AgentIntent.GET_HOUSEHOLD_BRIEFING:
+        return MCPToolCall(
+            tool_name="get_household_briefing",
+            arguments={},
+        )
 
     if decision.intent == AgentIntent.GET_EXPECTED_VISITORS:
         return MCPToolCall(
@@ -195,6 +198,7 @@ def resolve_mcp_tool_call(
         confirm=confirm,
         speaker_name=speaker_name,
     )
+
 
 async def run_mcp_conversation_turn(
     message: str,

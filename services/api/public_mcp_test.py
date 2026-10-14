@@ -17,12 +17,22 @@ async def main() -> None:
         read_stream,
         write_stream,
     ):
-        async with ClientSession(read_stream, write_stream) as session:
+        async with ClientSession(
+            read_stream,
+            write_stream,
+        ) as session:
             result = await session.initialize()
 
             print("\nMCP initialization successful")
             print(f"Server: {result.server_info.name}")
-            print(f"Version: {result.server_info.version}")
+            print(
+                "Server Version: "
+                f"{result.server_info.version}"
+            )
+            print(
+                "Protocol Version: "
+                f"{result.protocol_version}"
+            )
 
             tools = await session.list_tools()
 
@@ -60,9 +70,12 @@ async def main() -> None:
             create_task_result = await session.call_tool(
                 "create_task",
                 {
-                    "title": "Hackathon MCP verification task",
+                    "title": (
+                        "Hackathon MCP protocol verification task"
+                    ),
                     "description": (
-                        "Created through the public Nexa MCP endpoint."
+                        "Created while verifying the public "
+                        "Nexa MCP protocol."
                     ),
                     "confirm": True,
                 },

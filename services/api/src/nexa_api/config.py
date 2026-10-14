@@ -29,6 +29,8 @@ class Settings(BaseSettings):
 
     openai_api_key: str | None = None
     openai_model: str = "gpt-6-astra"
+    bedrock_region: str = "us-east-1"
+    bedrock_model_id: str = "amazon.nova-lite-v1:0"
 
     @property
     def is_production(self) -> bool:

@@ -5,9 +5,12 @@ Streamable HTTP transport.
 """
 
 from mcp.server.mcpserver import MCPServer
+from mcp.server.transport_security import TransportSecuritySettings
 from sqlalchemy.orm import Session
 
 from nexa_api.agent_service import run_agent
+from nexa_api.bedrock_service import generate_household_briefing
+from nexa_api.config import get_settings
 from nexa_api.database import SessionLocal
 from nexa_api.delivery_service import list_deliveries
 from nexa_api.enums import DeliveryStatus, TaskStatus, VisitorStatus
@@ -15,8 +18,8 @@ from nexa_api.presence_service import list_presence
 from nexa_api.schemas import AgentResponse
 from nexa_api.task_service import list_tasks
 from nexa_api.visitor_service import list_visitors
-from mcp.server.transport_security import TransportSecuritySettings
 
+settings = get_settings()
 mcp = MCPServer("Nexa")
 
 
@@ -304,6 +307,28 @@ def _update_presence_action(
     )
 
     return _serialize_agent_response(response)
+
+@mcp.tool()
+def get_household_briefing() -> dict[str, object]:
+    """Generate a concise household briefing with Amazon Bedrock."""
+
+    with SessionLocal() as session:
+        household_context = {
+            "presence": _serialize_household_presence(session),
+            "visitors": _serialize_expected_visitors(session),
+            "deliveries": _serialize_pending_deliveries(session),
+            "tasks": _serialize_open_tasks(session),
+        }
+
+    briefing = generate_household_briefing(
+        household_context,
+    )
+
+    return {
+        "briefing": briefing,
+        "provider": "Amazon Bedrock",
+        "model": settings.bedrock_model_id,
+    }
 
 
 @mcp.tool()

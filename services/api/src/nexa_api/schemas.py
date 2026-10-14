@@ -399,6 +399,8 @@ class AgentIntent(StrEnum):
     GET_PENDING_DELIVERIES = "get_pending_deliveries"
     GET_HOUSEHOLD_PRESENCE = "get_household_presence"
     GET_OPEN_TASKS = "get_open_tasks"
+    GET_HOUSEHOLD_BRIEFING = "get_household_briefing"
+
     CREATE_TASK = "create_task"
     COMPLETE_TASK = "complete_task"
     CANCEL_VISITOR = "cancel_visitor"
@@ -407,6 +409,7 @@ class AgentIntent(StrEnum):
     MARK_DELIVERY_COLLECTED = "mark_delivery_collected"
     MARK_DELIVERY_DELIVERED = "mark_delivery_delivered"
     UPDATE_PRESENCE = "update_presence"
+
     UNKNOWN = "unknown"
 
 class AgentRequest(BaseModel):

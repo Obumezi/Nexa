@@ -58,6 +58,24 @@ def resolve_intent(message: str) -> AgentDecision:
     if any(
         phrase in normalized
         for phrase in (
+            "household briefing",
+            "home briefing",
+            "give me a household update",
+            "give me a home update",
+            "brief me on the house",
+            "brief me on the household",
+            "what's happening around the house",
+            "whats happening around the house",
+        )
+    ):
+        return AgentDecision(
+            intent=AgentIntent.GET_HOUSEHOLD_BRIEFING,
+            confidence=1.0,
+        )
+
+    if any(
+        phrase in normalized
+        for phrase in (
             "expected visitor",
             "expected today",
             "who is coming",

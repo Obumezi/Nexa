@@ -9,6 +9,7 @@ description = "Core API for the Nexa household intelligence agent"
 requires-python = ">=3.11"
 dependencies = [
   "alembic>=1.15,<2.0",
+  "boto3>=1.40,<2.0",
   "fastapi>=0.115,<1.0",
   "mcp>=2.0,<3.0",
   "openai>=1.0,<2.0",
